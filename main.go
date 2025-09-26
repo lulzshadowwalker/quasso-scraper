@@ -16,8 +16,8 @@ func main() {
 	mux := http.NewServeMux()
 	SetupAssetsRoutes(mux)
 	mux.Handle("GET /", templ.Handler(pages.Landing()))
-	fmt.Println("Server is running on http://localhost:8090")
-	http.ListenAndServe(":8090", mux)
+	fmt.Println("Server is running on http://localhost:3000")
+	http.ListenAndServe(":3000", mux)
 }
 
 func InitDotEnv() {

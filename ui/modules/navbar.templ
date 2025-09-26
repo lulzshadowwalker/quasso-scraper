@@ -6,15 +6,16 @@ import (
 )
 
 templ Navbar() {
-	<nav class="py-1">
+	<nav class="py-2 border-b border-b-2">
 		<div class="px-6 flex justify-between items-center relative">
 			<div class="flex items-center">
 				<!-- @NavbarMobileMenu() -->
 				<a href="/" class="flex items-center gap-1.5">
-					@icon.ToggleLeft(icon.Props{Class: "w-6 h-6"})
-					<span class="text-xl">templ<span class="font-bold">UI</span></span>
+					@icon.Utensils(icon.Props{Class: "w-5 h-5"})
+					<span class="text-xl font-light">Quasso Scraper</span>
 				</a>
 			</div>
+
 			<div class="flex gap-1 items-center justify-center">
 				@ThemeSwitcher()
 			</div>
