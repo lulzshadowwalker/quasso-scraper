@@ -1,65 +1,60 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const els = ["table", "html", "json"];
+  const previewTypes = ["table", "html", "json"];
 
-  for (const el of els) {
-    const $switch = document.getElementById(`js-${el}-preview`);
-    const $container = document.getElementById(`js-${el}-preview-container`);
+  previewTypes.forEach((type) => {
+    const $switch = document.getElementById(`js-${type}-preview`);
+    const $container = document.getElementById(`js-${type}-preview-container`);
 
-    const key = `preview-${el}`;
-    const stored = localStorage.getItem(key);
-    if (stored !== null) {
-      const checked = stored === "true";
-      $switch.checked = checked;
+    const key = `preview-${type}`;
+    if ($switch && $container) {
+      $switch.checked = localStorage.getItem(key) === "true";
+      $container.style.display = $switch.checked ? "block" : "none";
+      $switch.addEventListener("change", function () {
+        $container.style.display = $switch.checked ? "block" : "none";
+        localStorage.setItem(key, $switch.checked.toString());
+      });
     }
+  });
 
-    function handlePreview() {
-      if ($switch.checked) {
-        $container.style.display = "block";
-      } else {
-        $container.style.display = "none";
+  const $form = document.getElementById("js-form");
+  if ($form) {
+    $form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const $input = document.getElementById("js-input");
+      if (!$input || $input.value.trim() === "") {
+        toaster.toast("No input provided", "Please provide a URL to scrape.");
+        return;
       }
-    }
 
-    handlePreview();
+      try {
+        const query = encodeURIComponent($input.value.trim());
 
-    $switch.addEventListener("change", function () {
-      handlePreview();
-      localStorage.setItem(key, this.checked.toString());
+        const response = await fetch(`/scrape?url=${query}`);
+        if (!response.ok) {
+          const message = await response.text();
+          toaster.toast("Failed to scrape URL", message);
+          return;
+        }
+
+        const data = await response.json();
+
+        document.querySelector("#js-html-code pre code").textContent =
+          data.html || "";
+
+        document.querySelector("#js-json-code pre code").textContent =
+          JSON.stringify(data.data || {}, null, 2);
+
+        toaster.toast("Scrape successful", "The URL was scraped successfully.");
+
+        document
+          .querySelectorAll("[data-highlighted]")
+          .forEach((el) => el.removeAttribute("data-highlighted"));
+        hljs.highlightAll();
+      } catch (err) {
+        console.error(err);
+        toaster.toast("Error", "An unexpected error occurred.");
+      }
     });
   }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const $form = document.getElementById("js-form");
-  $form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    const $input = document.getElementById("js-input");
-
-    if ($input.value.trim() === "") {
-      toaster.toast("No input provided", "Please please a URL to scrape.");
-      return;
-    }
-
-    const query = encodeURIComponent($input.value.trim());
-    const response = await fetch(`/scrape?url=${query}`);
-    if (!response.ok) {
-      const message = await response.text();
-      toaster.toast("Failed to scrape URL", message);
-      return;
-    }
-
-    const data = await response.json();
-    const html = data.html || "";
-    const json = data.data || "{}";
-
-    toaster.toast("Scrape successful", "The URL was scraped successfully.");
-    document.querySelector("#js-html-code pre code").textContent = html;
-    document.querySelector("#js-json-code pre code").textContent =
-      JSON.stringify(json, null, 2);
-
-    document.querySelectorAll("[data-highlighted]").forEach((element) => {
-      element.removeAttribute("data-highlighted");
-    });
-    hljs.highlightAll();
-  });
 });
