@@ -5,7 +5,7 @@ Get started with templUI components for Go + templ.
 ## Quick Start
 
 ```bash
-git clone https://github.com/templui/templui-quickstart.git my-app
+git clone https://github.com/lulzshadowwalker/quasso-scraper.git my-app
 cd my-app
 make dev
 ```

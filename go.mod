@@ -1,4 +1,4 @@
-module github.com/templui/templui-quickstart
+module github.com/lulzshadowwalker/quasso-scraper
 
 go 1.24.0
 

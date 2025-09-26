@@ -9,9 +9,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/joho/godotenv"
-	"github.com/templui/templui-quickstart/assets"
-	"github.com/templui/templui-quickstart/internal/scraper"
-	"github.com/templui/templui-quickstart/ui/pages"
+	"github.com/lulzshadowwalker/quasso-scraper/assets"
+	"github.com/lulzshadowwalker/quasso-scraper/internal/scraper"
+	"github.com/lulzshadowwalker/quasso-scraper/ui/pages"
 )
 
 func main() {
