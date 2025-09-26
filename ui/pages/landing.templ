@@ -3,6 +3,7 @@ package pages
 import (
 	"github.com/templui/templui-quickstart/ui/components/button"
 	"github.com/templui/templui-quickstart/ui/components/card"
+	"github.com/templui/templui-quickstart/ui/components/code"
 	"github.com/templui/templui-quickstart/ui/components/icon"
 	"github.com/templui/templui-quickstart/ui/components/input"
 	"github.com/templui/templui-quickstart/ui/components/label"
@@ -28,17 +29,20 @@ templ Landing() {
 						}
 					}
 					@card.Content() {
-						<div class="flex items-center gap-4">
+						<form id="js-form" class="flex items-center gap-4">
 							@input.Input(input.Props{
 								Type:        "text",
 								Placeholder: "Enter Restaurant Menu URL",
+								ID:          "js-input",
 								Class:       "w-full",
 							})
-							@button.Button() {
+							@button.Button(button.Props{
+								Type: button.TypeSubmit,
+							}) {
 								@icon.Search()
 								Scrape
 							}
-						</div>
+						</form>
 					}
 					@card.Footer() {
 						<div class="flex items-center gap-4">
@@ -85,12 +89,32 @@ templ Landing() {
 				Title:       "HTML Preview",
 				Description: "Here is a preview of the extracted menu data in HTML format.",
 			}) {
+				<div>
+					@code.Code(code.Props{
+						ID:             "js-html-code",
+						Language:       "html",
+						ShowCopyButton: true,
+					}) {
+						{ `<div>hello, sailor!</div>` }
+					}
+				</div>
 			}
 			@Section(SectionProps{
 				ID:          "js-json-preview-container",
 				Title:       "JSON Preview",
 				Description: "Here is a preview of the extracted menu data in JSON format.",
 			}) {
+				<div>
+					@code.Code(code.Props{
+						ID:             "js-json-code",
+						Language:       "json",
+						ShowCopyButton: true,
+					}) {
+						{ `{
+    "hello": "sailor!"
+    }` }
+					}
+				</div>
 			}
 			@Section(SectionProps{
 				Title: "Download Menu Data",

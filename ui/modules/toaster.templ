@@ -1,0 +1,82 @@
+package modules
+
+import "github.com/templui/templui-quickstart/ui/components/alert"
+import "github.com/templui/templui-quickstart/ui/components/icon"
+
+templ Toaster() {
+<div id="js-toast-template" class="hidden opacity-0 transition-all duration-300 ease-in-out w-full max-w-xl right-0">
+  @alert.Alert(alert.Props{Variant: alert.VariantDefault, Class: "bg-white dark:bg-muted"}) {
+  @icon.Check(icon.Props{Size: 16})
+  @alert.Title(alert.TitleProps{ID: "js-toast-title-template"}) {
+  Template Title
+  }
+  @alert.Description(alert.DescriptionProps{ID: "js-toast-description-template"}) {
+  Template Description
+  }
+  }
+</div>
+<div id="js-toaster-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 w-full max-w-xl"></div>
+<script>
+  class Toaster {
+    constructor() {
+      this.container = document.getElementById('js-toaster-container')
+      this.template = document.getElementById('js-toast-template')
+      this.toasts = new Map()
+      this.toastCounter = 0
+    }
+
+    toast(title, description) {
+      const toastId = `toast-${++this.toastCounter}`
+
+      const toastElement = this.template.cloneNode(true)
+
+      toastElement.id = toastId
+      toastElement.classList.remove('hidden')
+      toastElement.hidden = false
+
+      const titleElement = toastElement.querySelector('#js-toast-title-template')
+      if (titleElement) {
+        titleElement.id = `js-toast-title-${toastId}`
+        titleElement.textContent = title
+      }
+
+      const descriptionElement = toastElement.querySelector('#js-toast-description-template')
+      if (descriptionElement) {
+        titleElement.id = `js-toast-description-${toastId}`
+        descriptionElement.textContent = description
+      }
+
+      this.container.appendChild(toastElement)
+      this.toasts.set(toastId, toastElement)
+
+      requestAnimationFrame(() => {
+        toastElement.classList.remove('opacity-0', 'right-0')
+        toastElement.classList.add('opacity-100', 'right-4')
+      })
+
+      setTimeout(() => {
+        this.dismissToast(toastId)
+      }, 3000)
+
+      return toastId
+    }
+
+    dismissToast(toastId) {
+      const toast = this.toasts.get(toastId)
+      if (!toast) return
+
+      toast.classList.remove('opacity-100', 'right-4')
+      toast.classList.add('right-0', 'opacity-0')
+
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast)
+        }
+        this.toasts.delete(toastId)
+      }, 300)
+    }
+  }
+
+  window.toaster = new Toaster()
+</script>
+}

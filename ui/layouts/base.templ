@@ -2,6 +2,7 @@ package layouts
 
 import "github.com/templui/templui-quickstart/ui/modules"
 import "github.com/templui/templui-quickstart/ui/components/input"
+import "github.com/templui/templui-quickstart/ui/components/code"
 
 templ BaseLayout() {
 	<!DOCTYPE html>
@@ -13,6 +14,7 @@ templ BaseLayout() {
 			<link href="/assets/css/output.css" rel="stylesheet"/>
 			<script src="/assets/js/script.js" defer></script>
 			@input.Script()
+			@code.Script()
 		</head>
 		<body class="h-full">
 			<div class="h-full flex flex-col">
@@ -20,6 +22,7 @@ templ BaseLayout() {
 				<main class="flex-1">
 					{ children... }
 				</main>
+				@modules.Toaster()
 			</div>
 		</body>
 	</html>
