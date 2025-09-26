@@ -1,0 +1,25 @@
+package layouts
+
+import (
+	"github.com/templui/templui-quickstart/ui/modules"
+)
+
+templ BaseLayout() {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full dark">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<!-- Tailwind CSS (output) -->
+			<link href="/assets/css/output.css" rel="stylesheet"/>
+		</head>
+		<body class="h-full">
+			<div class="h-full flex flex-col">
+				@modules.Navbar()
+				<main class="flex-1">
+					{ children... }
+				</main>
+			</div>
+		</body>
+	</html>
+}
