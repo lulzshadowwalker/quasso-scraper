@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const previewTypes = ["table", "html", "json"];
 
+  let menuData = null; // Store scraped menu data globally
+
   previewTypes.forEach((type) => {
     const $switch = document.getElementById(`js-${type}-preview`);
     const $container = document.getElementById(`js-${type}-preview-container`);
@@ -44,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const data = await response.json();
 
-        const menuData = extractMenuData(data.data || {});
+        menuData = extractMenuData(data.data || {});
         updateTable(menuData);
 
         document.querySelector("#js-html-code pre code").textContent =
@@ -65,6 +67,80 @@ document.addEventListener("DOMContentLoaded", function () {
       } finally {
         $button.disabled = false;
         $button.textContent = originalText;
+      }
+    });
+  }
+
+  const $createMirrorBtn = document.getElementById("js-create-mirror");
+  if ($createMirrorBtn) {
+    $createMirrorBtn.addEventListener("click", async function () {
+      if (!menuData) {
+        toaster.toast("No data available", "Please scrape a menu first before creating a mirror.");
+        return;
+      }
+
+      $createMirrorBtn.disabled = true;
+      const originalText = $createMirrorBtn.textContent;
+      $createMirrorBtn.innerHTML = `<span class="inline-block w-3 h-3 border-2 border-white border-b-transparent rounded-full animate-spin"></span> Creating...`;
+
+      try {
+        const apiUrl = window.API_URL || 'http://localhost:8000/api/v1/scraper';
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(menuData),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          toaster.toast("Failed to create mirror", result.message || "An error occurred while creating the mirror restaurant.");
+          return;
+        }
+
+        if (result.success) {
+          toaster.toast("Mirror created", result.message || "Restaurant mirror created successfully.");
+
+          // Show the result details
+          const $resultDiv = document.getElementById("js-mirror-result");
+          const $cmsUrl = document.getElementById("js-cms-url");
+          const $mirrorMessage = document.getElementById("js-mirror-message");
+          const $menuUrl = document.getElementById("js-menu-url");
+          const $email = document.getElementById("js-email");
+          const $password = document.getElementById("js-password");
+
+          if ($mirrorMessage && result.message) {
+            $mirrorMessage.textContent = result.message;
+          }
+
+          if ($cmsUrl && result.cms) {
+            $cmsUrl.href = result.cms;
+            $cmsUrl.textContent = result.cms;
+          }
+          if ($menuUrl && result.menu) {
+            $menuUrl.href = result.menu;
+            $menuUrl.textContent = result.menu;
+          }
+          if ($email && result.email) {
+            $email.textContent = result.email;
+          }
+          if ($password && result.password) {
+            $password.textContent = result.password;
+          }
+
+          $resultDiv.classList.remove("hidden");
+        } else {
+          toaster.toast("Failed to create mirror", result.message || "Failed to create mirror restaurant.");
+        }
+      } catch (err) {
+        console.error(err);
+        toaster.toast("Error", "An unexpected error occurred while creating the mirror.");
+      } finally {
+        $createMirrorBtn.disabled = false;
+        $createMirrorBtn.textContent = originalText;
       }
     });
   }

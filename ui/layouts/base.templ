@@ -4,7 +4,11 @@ import "github.com/lulzshadowwalker/quasso-scraper/ui/modules"
 import "github.com/lulzshadowwalker/quasso-scraper/ui/components/input"
 import "github.com/lulzshadowwalker/quasso-scraper/ui/components/code"
 
-templ BaseLayout() {
+templ BaseLayout(props ...BaseLayoutProps) {
+	{{ var p BaseLayoutProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
 	<!DOCTYPE html>
 	<html lang="en" class="h-full dark">
 		<head>
@@ -16,6 +20,9 @@ templ BaseLayout() {
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify.min.js" defer></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-css.min.js" defer></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-html.min.js" defer></script>
+			<script>
+				window.API_URL = '{{ p.APIBaseURL }}' || 'http://localhost:8000/api/v1/scraper';
+			</script>
 			@input.Script()
 			@code.Script()
 		</head>
@@ -29,4 +36,8 @@ templ BaseLayout() {
 			</div>
 		</body>
 	</html>
+}
+
+type BaseLayoutProps struct {
+	APIBaseURL string
 }

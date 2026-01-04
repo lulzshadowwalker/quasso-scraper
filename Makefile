@@ -20,9 +20,9 @@ tailwind-clean:
 
 # Run tailwindcss to generate the styles.css bundle in watch mode.
 tailwind-watch:
-	tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch
+	npx @tailwindcss/cli -i ./assets/css/input.css -o ./assets/css/output.css --watch
 
 # Start development server
 dev:
-	make tailwind-clean
+# 	make tailwind-clean
 	make -j3 tailwind-watch templ server

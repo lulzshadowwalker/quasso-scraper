@@ -12,11 +12,15 @@ import (
 	"github.com/lulzshadowwalker/quasso-scraper/ui/layouts"
 )
 
-templ Landing() {
-	@layouts.BaseLayout() {
+templ Landing(props ...layouts.BaseLayoutProps) {
+	{{ var p layouts.BaseLayoutProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	@layouts.BaseLayout(p) {
 		<div class="h-full container mx-auto px-4 my-8 space-y-6">
 			@Section(SectionProps{
-				Title:       "Menu Scraper Tool",
+				Title:       "Tapmenu Scraper",
 				Description: "Enter a restaurant menu URL to extract its data.",
 			}) {
 				@card.Card() {
@@ -127,6 +131,37 @@ templ Landing() {
 						Download Zip
 					}
 				</div>
+			}
+			@Section(SectionProps{
+				ID:          "js-mirror-container",
+				Title:       "Create Mirror Restaurant",
+				Description: "Create a mirror copy of the scraped restaurant on our platform.",
+			}) {
+				<div class="flex items-center gap-4">
+					@button.Button(button.Props{
+						ID: "js-create-mirror",
+					}) {
+						@icon.Copy()
+						Create Mirror
+					}
+				</div>
+				@card.Card(card.Props{
+					ID:    "js-mirror-result",
+					Class: "hidden mt-4",
+				}) {
+					@card.Header() {
+						<h4 class="font-semibold mb-2">Mirror Restaurant Created Successfully!</h4>
+						<p id="js-mirror-message" class="mb-4"></p>
+					}
+					@card.Content() {
+						<div class="space-y-2 text-sm">
+							<div><strong>CMS URL:</strong> <a id="js-cms-url" href="#" target="_blank" class="text-blue-600 hover:underline"></a></div>
+							<div><strong>Menu URL:</strong> <a id="js-menu-url" href="#" target="_blank" class="text-blue-600 hover:underline"></a></div>
+							<div><strong>Email:</strong> <span id="js-email"></span></div>
+							<div><strong>Password:</strong> <span id="js-password" class="font-mono"></span></div>
+						</div>
+					}
+				}
 			}
 		</div>
 	}

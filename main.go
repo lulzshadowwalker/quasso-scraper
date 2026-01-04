@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/lulzshadowwalker/quasso-scraper/assets"
 	"github.com/lulzshadowwalker/quasso-scraper/internal/scraper"
+	"github.com/lulzshadowwalker/quasso-scraper/ui/layouts"
 	"github.com/lulzshadowwalker/quasso-scraper/ui/pages"
 )
 
@@ -18,10 +19,12 @@ func main() {
 	InitDotEnv()
 	mux := http.NewServeMux()
 	SetupAssetsRoutes(mux)
-	mux.Handle("GET /", templ.Handler(pages.Landing()))
+	mux.Handle("GET /", templ.Handler(pages.Landing(layouts.BaseLayoutProps{
+		APIBaseURL: getEnv("API_URL", "http://localhost:8000/api/v1/scraper"),
+	})))
 	mux.HandleFunc("GET /scrape", scrape)
-	fmt.Println("Server is running on http://localhost:3000")
-	http.ListenAndServe(":3000", mux)
+	fmt.Println("Server is running on http://localhost:8090")
+	http.ListenAndServe(":8090", mux)
 }
 
 func scrape(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +79,13 @@ func InitDotEnv() {
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }
 
 func SetupAssetsRoutes(mux *http.ServeMux) {
