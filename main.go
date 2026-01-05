@@ -23,6 +23,8 @@ func main() {
 		APIBaseURL: getEnv("API_URL", "http://localhost:8000/api/v1/scraper"),
 	})))
 	mux.HandleFunc("GET /scrape", scrape)
+	mux.HandleFunc("HEAD /health", health)
+	mux.HandleFunc("GET /health", health)
 	fmt.Println("Server is running on http://localhost:8090")
 	http.ListenAndServe(":8090", mux)
 }
@@ -72,6 +74,11 @@ func scrape(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Error encoding response: %v", err), http.StatusInternalServerError)
 		return
 	}
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
 
 func InitDotEnv() {
